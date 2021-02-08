@@ -12,7 +12,7 @@ class MyController extends Controller
     public function getListData()
     {
         try {
-            $data = Dosen::where('dsnPegNip','<>',0)->whereRaw("dsnPegNip in (select PegNip from pegawai where pegJurKode = 37)")->distinct()->get();
+            $data = Dosen::select('dosen.*')->where('dsnPegNip','<>',0)->leftjoin('s_dosen_kelas','s_dosen_kelas.dsnkDsnPegNip','=','dosen.dsnPegNip')->leftjoin('s_kelas','s_dosen_kelas.dsnkKlsId','=','s_kelas.klsId')->leftjoin('s_matakuliah_kurikulum', 's_matakuliah_kurikulum.mkkurId', '=', 's_kelas.klsMkkurId')->whereIn('mkkurProdiKode',[83,84])->whereRaw('klsSemId in (select sempSemId from s_semester_prodi where sempIsAktif = 1)')->distinct()->get();
             $data = listCollection::collection($data);
             return $this->MessageSuccess($data);
         } catch (\Exception $e) {

@@ -16,7 +16,7 @@ class MyController extends Controller
     public function getListData()
     {
         try {
-            $data = Mahasiswa::where('mhsStakmhsrKode','A')->where('mhsNiu','<>',0)->orderby('mhsNiu','desc')->get();
+            $data = Mahasiswa::select('mahasiswa.*')->join('s_krs','s_krs.krsMhsNiu','=','mahasiswa.mhsNiu')->join('s_krs_detil','s_krs.krsId','=','s_krs_detil.krsdtKrsId')->join('s_kelas','s_krs_detil.krsdtKlsId','=','s_kelas.klsId')->join('s_matakuliah_kurikulum', 's_matakuliah_kurikulum.mkkurId', '=', 's_kelas.klsMkkurId')->whereIn('mkkurProdiKode',[83,84])->whereRaw('klsSemId in (select sempSemId from s_semester_prodi where sempIsAktif = 1)')->where('mhsNiu','<>',0)->orderby('mhsNiu','desc')->distinct()->get();
             $data = mahasiswaCollection::collection($data);
             return $this->MessageSuccess($data);
         } catch (\Exception $e) {
